@@ -1,32 +1,30 @@
 version: 2.1
-
 jobs:
   build-and-push-docker-image:
     docker:
-      - image: cimg/openjdk:17.0  # CircleCI-maintained image with Java 17
-
+      - image: cimg/openjdk:17.0
     steps:
       - checkout
-
+      - run:
+          name: Navigate to Backend Directory
+          command: cd backend # Change 'backend' to the correct directory if different
       - run:
           name: Build with Maven
-          command: mvn clean package -DskipTests  # Build the jar file without running tests
-
+          command: mvn clean package -DskipTests
       - setup_remote_docker:
-          version: 20.10.7  # Use a remote Docker daemon to build and push images
-
+          version: 20.10.7
       - run:
           name: Build Docker Image
-          command: docker build -t kavin2002/backend:${CIRCLE_SHA1} .  # Build Docker image with commit hash as tag
-
+          command: docker build -t kavin2002/backend:${CIRCLE_SHA1} .
+      - run:
+          name: Debug CIRCLE_SHA1
+          command: echo "SHA1:${CIRCLE_SHA1}"
       - run:
           name: Login to Docker Hub
-          command: |
-            echo "Velavan2002@" | docker login -u "kavin2002" --password-stdin
-
+          command: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
       - run:
           name: Push Docker Image
-          command: docker push kavin2002/backend:${CIRCLE_SHA1}  # Push Docker image to Docker Hub
+          command: docker push kavin2002/backend:${CIRCLE_SHA1}
 
 workflows:
   build-and-push-workflow:
