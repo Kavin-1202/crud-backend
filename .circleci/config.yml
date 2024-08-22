@@ -17,16 +17,15 @@ jobs:
 
       - run:
           name: Build Docker Image
-          command: docker build -t kavin2002/backend :${CIRCLE_SHA1} .  # Build Docker image with commit hash as tag
+          command: docker build -t kavin2002/backend:${CIRCLE_SHA1} .  # Build Docker image with consistent tag
 
       - run:
           name: Login to Docker Hub
-          command: |
-            echo "Velavan2002@" | docker login -u "kavin2002" --password-stdin
+          command: echo "Velavan2002@" | docker login -u "kavin2002" --password-stdin  # Login to Docker Hub
 
       - run:
           name: Push Docker Image
-          command: docker push kavin2002/backend :${CIRCLE_SHA1}  # Push Docker image to Docker Hub
+          command: docker push kavin2002/backend:${CIRCLE_SHA1}  # Push Docker image to Docker Hub with the correct tag
 
 workflows:
   build-and-push-workflow:
